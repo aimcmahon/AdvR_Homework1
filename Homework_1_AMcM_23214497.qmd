@@ -1,0 +1,214 @@
+---
+title: "Titanic Survivors"
+author: "Aisling Mc Mahon 23214497"
+date: today
+format:
+  revealjs:
+    center: true
+    theme: night
+    slide-number: true
+    transition: fade
+    figure-align: right
+    tbl-colwidths: auto
+execute: 
+  eval: true
+  echo: false
+  warning: false
+  message: false
+fontsize: 18pt
+---
+
+# The Titanic Dataset
+
+***
+
+###  Titanic Data 
+
+The **Titanic Dataset** is a dataset available from the *carData* package in R. It is a dataframe with 1309 observations and 4 variables. The data contains information on the survival status, sex, age and passenger class of 1309 passengers aboard the Titanic during its fateful voyage in 1912. It contains one numeric variable, age, and three categorical variables, survival, sex and passengerClass.
+
+
+
+```{r}
+#|label: load_dataset
+
+#load required package
+
+library(carData)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+
+#load dataset
+data("TitanicSurvival")
+```
+
+
+```{r}
+#| label: Structure_TitanicSurvival
+
+# look at the structure of the dataset
+str(TitanicSurvival)
+```
+
+***
+
+### Descriptive statistics for the TitanicSurvival dataset
+
+Before creating a plot, I will look at some descriptive statistics for the **TitanicSurvival** data.
+
+
+
+```{r}
+#| label: Descriptives_Titanic survival
+ 
+#compile some summary statistics for the dataset
+
+summary(TitanicSurvival)
+
+Percent_sex <- TitanicSurvival|>
+  group_by(sex) |>
+  summarise(Percent = n() / nrow(TitanicSurvival) * 100)
+
+knitr::kable(Percent_sex, digits = 2) 
+
+Percent_survival <- TitanicSurvival|>
+  group_by(survived) |>
+  summarise(Percent = n() / nrow(TitanicSurvival) * 100)
+
+knitr::kable(Percent_survival, digits = 2) 
+
+Percent_class <- TitanicSurvival|>
+  group_by(passengerClass) |>
+  summarise(Percent = n() / nrow(TitanicSurvival) * 100)
+
+knitr::kable(Percent_class, digits = 2) 
+```
+
+
+***
+
+
+To summarise the dataset: 
+
+- the majority of passengers (64.4%) were <span style="color: green;">male</span> 
+
+- the mean age was <span style="color: blue;">29.88</span>, ranging from 2 months old to 80 years old
+
+- just over half (54.16%) being in <span style="color: orange;">3rd class</span> 
+
+- <span style="color: red;">61.8%</span> of passengers on the Titanic died after the ship collided with the ice-berg. 
+
+***
+
+# Plots
+
+***
+
+### Plots
+
+I will now create two plots to visualise survival by ***gender*** and ***class***. The hypothesis would be that survival is higher in females and in first class passengers. This would fit with the premise of women and children first and that passengers in 1st class were likely given priority when lifeboats were being boarded. 
+
+***
+
+### Survival by Gender
+
+:::: {.columns}
+
+::: {.column width="60%"}
+
+```{r}
+#| label: Survival_tables
+#| fontsize: 12pt
+
+Gender_survival <- TitanicSurvival|>
+  group_by(sex)|>
+  count(survived)
+
+
+Gender_survival <- pivot_wider(Gender_survival,
+names_from = survived, values_from = n)
+
+Gender_survival <- Gender_survival |>
+mutate(Frequency = yes/(yes+no)) |>
+mutate(Percentage = Frequency*100)
+knitr::kable(Gender_survival, digits = 2)
+```
+:::
+
+::: {.column width="40%"}
+
+```{r}
+#|label: Plots-gender
+
+Mort_gender_plot <- Gender_survival|>
+  ggplot(aes(x = sex, y = Percentage, fill = sex)) +
+geom_col() +
+labs(title = "Titanic survival by gender", y = "Percent", x = NULL) +
+theme(plot.title = element_text(hjust = 0.5))
+
+Mort_gender_plot
+```
+
+:::
+
+
+::::
+
+
+***
+
+### Survival by Passenger Class
+
+
+```{r}
+#|fontsize: 12pt
+
+Class_survival <- TitanicSurvival|>
+  group_by(passengerClass)|>
+  count(survived)
+
+
+Class_survival <- pivot_wider(Class_survival,
+names_from = survived, values_from = n)
+
+Class_survival <- Class_survival |>
+mutate(Frequency = yes/(yes+no)) |>
+mutate(Percentage = Frequency*100)
+knitr::kable(Class_survival, digits = 2)
+
+```
+
+
+
+
+```{r}
+#|label: Plots-class
+
+Mort_class_plot <- Class_survival|>
+  ggplot(aes(x = passengerClass, y = Percentage, fill = passengerClass)) +
+geom_col() +
+labs(title = "Titanic survival by Class", y = "Percent", x = NULL) +
+theme(plot.title = element_text(hjust = 0.5))
+
+Mort_class_plot
+```
+
+
+***
+
+## Conclusion
+
+
+On inspection on the plots and data from the tables it appears that survival was higher for <span style="color: red;">females</span> passengers and those in <span style="color: green;">1st class</span>.
+
+
+```{r}
+#| label: Stats
+
+chisq.test(TitanicSurvival$sex, TitanicSurvival$survived)
+chisq.test(TitanicSurvival$passengerClass, TitanicSurvival$survived)
+
+```
+
+These differences are statistically significant at a p value of <0.05. The null hypothesis that there was no difference in survival based on gender or passenger class can be rejected, and the alternative hypothesis accepted. 
+
