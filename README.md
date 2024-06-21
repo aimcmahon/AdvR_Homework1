@@ -3,4 +3,4 @@ Some R code as part of a homework assignment for a series of advanced R lectures
 
 The next assignment is to create and familiarise the students with *GitHub respositories* and *version control*.
 
-In order to do this, the assignment required creating this repository and commiting at least 2 changes.
+In order to do this, the assignment required creating this repository and committing at least 2 changes.
