@@ -122,7 +122,7 @@ I will now create two plots to visualise survival by ***gender*** and ***class**
 
 Gender_survival <- TitanicSurvival|>
   group_by(sex)|>
-  count(survived)
+  count(survived) #create a table of survival by sex
 
 
 Gender_survival <- pivot_wider(Gender_survival,
@@ -130,8 +130,8 @@ names_from = survived, values_from = n)
 
 Gender_survival <- Gender_survival |>
 mutate(Frequency = yes/(yes+no)) |>
-mutate(Percentage = Frequency*100)
-knitr::kable(Gender_survival, digits = 2)
+mutate(Percentage = Frequency*100) # calculate proportion and percentage
+knitr::kable(Gender_survival, digits = 2) #print table neatly wiith knitr
 ```
 :::
 
@@ -142,11 +142,11 @@ knitr::kable(Gender_survival, digits = 2)
 
 Mort_gender_plot <- Gender_survival|>
   ggplot(aes(x = sex, y = Percentage, fill = sex)) +
-geom_col() +
+geom_col() + #plot a bar chart for survival by gender
 labs(title = "Titanic survival by gender", y = "Percent", x = NULL) +
 theme(plot.title = element_text(hjust = 0.5))
 
-Mort_gender_plot
+Mort_gender_plot #print the plot
 ```
 
 :::
