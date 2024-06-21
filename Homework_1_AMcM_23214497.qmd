@@ -66,19 +66,19 @@ Before creating a plot, I will look at some descriptive statistics for the **Tit
 summary(TitanicSurvival)
 
 Percent_sex <- TitanicSurvival|>
-  group_by(sex) |>
+  group_by(sex) |> # look at percent male and female
   summarise(Percent = n() / nrow(TitanicSurvival) * 100)
 
 knitr::kable(Percent_sex, digits = 2) 
 
 Percent_survival <- TitanicSurvival|>
-  group_by(survived) |>
+  group_by(survived) |> # look at percent who survived and died
   summarise(Percent = n() / nrow(TitanicSurvival) * 100)
 
 knitr::kable(Percent_survival, digits = 2) 
 
 Percent_class <- TitanicSurvival|>
-  group_by(passengerClass) |>
+  group_by(passengerClass) |> # look at percent in 1st, 2nd, 3rd class
   summarise(Percent = n() / nrow(TitanicSurvival) * 100)
 
 knitr::kable(Percent_class, digits = 2) 
